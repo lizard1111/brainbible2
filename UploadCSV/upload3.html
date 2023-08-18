@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse Brain Visualization</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #upload-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #csv-file-input {
+            display: none;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+<body>
+    <input type="file" id="csv-file-input" accept=".csv" />
+    <button id="upload-button" onclick="document.getElementById('csv-file-input').click();">Upload CSV</button>
+    <script>
+        // Function to process the CSV data
+        function processCSVData(file) {
+            Papa.parse(file, {
+                header: true,
+                complete: function(results) {
+                    // Filter the data into left and right data
+                    var leftData = results.data.filter(row => row.name && row.name.includes('left '));
+                    var rightData = results.data.filter(row => row.name && row.name.includes('right '));
+
+                    // ... rest of the CSV processing code ...
+
+                    // Fetching the JSON file for mapping
+                    fetch('/mnt/data/color_acronym_name_mapping.json')
+                        .then(response => response.json())
+                        .then(data => {
+                            // Use the parsed JSON object (data) to map the acronyms to the appropriate colors and names
+                            // You can now continue with further processing, visualization, or saving the data
+                        });
+                }
+            });
+        }
+
+        document.getElementById('csv-file-input').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            processCSVData(file);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse Brain Visualization</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #upload-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #csv-file-input {
+            display: none;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+<body>
+    <input type="file" id="csv-file-input" accept=".csv" />
+    <button id="upload-button" onclick="document.getElementById('csv-file-input').click();">Upload CSV</button>
+
+    <script>
+        document.getElementById('csv-file-input').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+    
+            Papa.parse(file, {
+                header: true,
+                dynamicTyping: true,
+                complete: function(results) {
+                    console.log('Parsed Data:', results.data);
+    
+                    // Filter the data into left and right data
+                    var leftData = results.data.filter(row => row.name && row.name.includes('left '));
+                    var rightData = results.data.filter(row => row.name && row.name.includes('right '));
+                    console.log('Left Data:', leftData);
+                    console.log('Right Data:', rightData);
+    
+                    // Remove 'left ' and 'right ' from the names, and '-L' and '-R' from the acronyms
+                    leftData.forEach(row => {
+                        row.name = row.name.replace('left ', '');
+                        row.acronym = row.acronym.replace('-L', '');
+                    });
+                    rightData.forEach(row => {
+                        row.name = row.name.replace('right ', '');
+                        row.acronym = row.acronym.replace('-R', '');
+                    });
+                    console.log('Left Data after processing:', leftData);
+                    console.log('Right Data after processing:', rightData);
+    
+                    // Merge left and right data on the 'name' and 'acronym' columns
+                    var mergedData = [];
+                    leftData.forEach((leftRow, index) => {
+                        var rightRow = rightData[index]; // Assuming that the order is the same
+                        var mergedRow = {
+                            name: leftRow.name,
+                            acronym: leftRow.acronym,
+                            count_left: leftRow.count,
+                            count_right: rightRow.count,
+                            count_total: leftRow.count + rightRow.count,
+                            volume_left: leftRow['volume (mm^3)'],
+                            volume_right: rightRow['volume (mm^3)'],
+                            volume_total: leftRow['volume (mm^3)'] + rightRow['volume (mm^3)'],
+                            density_left: leftRow['density (cells/mm^3)'],
+                            density_right: rightRow['density (cells/mm^3)'],
+                            density_total: (leftRow['density (cells/mm^3)'] + rightRow['density (cells/mm^3)']) / 2
+                        };
+                        mergedData.push(mergedRow);
+                    });
+                    console.log('Merged Data:', mergedData);
+    
+                    // You can continue with further processing, visualization, or saving the data
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>
