@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypothalamus Visualization with Chart.js</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Hypothalamus Structures Visualization</h1>
+    <h3>Count Total</h3>
+    <canvas id="countTotalChart" width="800" height="400"></canvas>
+    <h3>Density Total (cells/mm^3)</h3>
+    <canvas id="densityTotalChart" width="800" height="400"></canvas>
+
+    <script>
+      var acronyms = ['HY', 'PVZ', 'SO', 'ASO', 'NC', 'PVH', /* ... more acronyms ... */];
+      var countTotals = [206783.0, 23755.0, 1386.0, 83.0, 8213.0, 2793.0, /* ... more count totals ... */];
+      var densityTotals = [13609.55330954168, 30525.990389434883, 29603.10474969736, 13700.438421681944, 43533.57214347167, /* ... more density totals ... */];
+      var colors = ['#E64438', '#FF5D50', '#FF5D50', '#FF5D50', '#FF5D50', /* ... more RGB colors ... */];
+
+      var ctxCount = document.getElementById('countTotalChart').getContext('2d');
+      var ctxDensity = document.getElementById('densityTotalChart').getContext('2d');
+
+      var countTotalChart = new Chart(ctxCount, {
+        type: 'bar',
+        data: {
+          labels: acronyms,
+          datasets: [
+            {
+              label: 'Count Total',
+              data: countTotals,
+              backgroundColor: colors,
+              borderColor: colors,
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      var densityTotalChart = new Chart(ctxDensity, {
+        type: 'bar',
+        data: {
+          labels: acronyms,
+          datasets: [
+            {
+              label: 'Density Total (cells/mm^3)',
+              data: densityTotals,
+              backgroundColor: colors,
+              borderColor: colors,
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
+</body>
+</html>
